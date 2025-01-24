@@ -2,7 +2,8 @@
 interface Ingredient {
   nameRu: string; // Название на русском
   nameCz: string; // Название на чешском
-  amount: string; // Количество с единицей измерения
+  amount: number; // Количество (число)
+  unit: string; // Единица измерения (г, мл, шт, etc.)
 }
 
 // Блюдо

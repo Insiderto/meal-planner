@@ -11,7 +11,9 @@ export function DishComponent({ name, ingredients }: Dish) {
               <span>{ingredient.nameRu}</span>
               <span className="text-gray-400 ml-2">({ingredient.nameCz})</span>
             </div>
-            <span className="ml-2">{ingredient.amount}</span>
+            <span className="ml-2">
+              {ingredient.amount} {ingredient.unit}
+            </span>
           </li>
         ))}
       </ul>

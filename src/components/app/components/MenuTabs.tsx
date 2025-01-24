@@ -58,10 +58,6 @@ export const MenuTabs = ({
 
   return (
     <div className="h-screen p-4 flex flex-col gap-2">
-      <Button onClick={onCreateMenu} className="w-full flex items-center gap-2">
-        <Plus size={16} />
-        Новое меню
-      </Button>
       <div className="flex flex-col gap-1">
         {menuTabs.map((tab) => (
           <div key={tab.id} className="flex items-center gap-1">
@@ -122,6 +118,14 @@ export const MenuTabs = ({
           </div>
         ))}
       </div>
+      <Button
+        variant="outline"
+        onClick={onCreateMenu}
+        className="w-full flex items-center gap-2"
+      >
+        <Plus size={16} />
+        Новое меню
+      </Button>
     </div>
   );
 };

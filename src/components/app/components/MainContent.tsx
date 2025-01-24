@@ -7,7 +7,7 @@ interface MainContentProps {
 
 export const MainContent = ({ menuData }: MainContentProps) => {
   return (
-    <div className="h-[calc(100vh-200px)] overflow-auto">
+    <div className="h-[calc(100vh-40px)] overflow-auto transition-all">
       <div className="p-4">
         <Menu days={menuData.days} />
       </div>

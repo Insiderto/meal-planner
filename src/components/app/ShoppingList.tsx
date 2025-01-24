@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Ingredient, MenuData } from "@/lib/types.ts";
+import { Ingredient, MenuData } from "@/lib/types";
 import { Search } from "lucide-react";
 
 interface ShoppingListProps {
@@ -17,15 +17,22 @@ const ShoppingList = ({ menuData }: ShoppingListProps) => {
     ...day.dinner.ingredients,
   ]);
 
+  // Группируем ингредиенты по названию и единице измерения
   const initialIngredients = Object.values(
     allIngredients.reduce((acc: Record<string, IngredientItem>, curr) => {
-      const key = `${curr.nameRu}-${curr.nameCz}`;
+      const key = `${curr.nameRu}-${curr.nameCz}-${curr.unit}`;
       if (!acc[key]) {
         acc[key] = {
-          ...curr,
           id: key,
+          nameRu: curr.nameRu,
+          nameCz: curr.nameCz,
+          amount: curr.amount,
+          unit: curr.unit,
           isChecked: false,
         };
+      } else {
+        // Суммируем количество для одинаковых ингредиентов
+        acc[key].amount += curr.amount;
       }
       return acc;
     }, {}),
@@ -94,7 +101,9 @@ const ShoppingList = ({ menuData }: ShoppingListProps) => {
             >
               <span className="font-medium">{ingredient.nameRu}</span>
               <span className="text-gray-500 ml-2">({ingredient.nameCz})</span>
-              <span className="text-gray-600 ml-2">{ingredient.amount}</span>
+              <span className="text-gray-600 ml-2">
+                {ingredient.amount} {ingredient.unit}
+              </span>
             </span>
           </label>
         ))}
