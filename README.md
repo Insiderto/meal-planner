@@ -1,50 +1,135 @@
-# React + TypeScript + Vite
+# Планировщик меню
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для планирования меню и создания списков покупок, разработанное для пары, живущей в Чехии. Приложение помогает организовать питание с учетом индивидуальных предпочтений и создает двуязычные списки покупок (русский/чешский).
 
-Currently, two official plugins are available:
+## Особенности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🗓️ Планирование меню на неделю
+- 📝 Поддержка нескольких меню
+- 🛒 Автоматическое создание списка покупок с суммированием ингредиентов
+- 🔍 Поиск по ингредиентам
+- 🌍 Двуязычные названия продуктов (русский/чешский)
+- 💾 Локальное хранение данных
+- 📱 Адаптивный дизайн
 
-## Expanding the ESLint configuration
+## Технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 18.3
+- TypeScript
+- Vite
+- Tailwind CSS
+- Dexie (IndexedDB)
+- shadcn/ui компоненты
+- Lucide иконки
 
-- Configure the top-level `parserOptions` property like this:
+## Установка
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+1. Клонируйте репозиторий:
+```bash
+git clone [url-репозитория]
+cd meal-planner
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
+2. Установите зависимости:
+```bash
+bun install
 ```
+
+3. Запустите приложение в режиме разработки:
+```bash
+bun dev
+```
+
+## Использование
+
+### Создание меню
+
+1. Скачайте файл с промптом для языковой модели
+2. Используйте любую языковую модель (например, Claude) для генерации JSON с меню
+3. Загрузите полученный JSON в приложение через зону загрузки
+
+### Работа со списком покупок
+
+- Все ингредиенты автоматически суммируются с учетом единиц измерения
+- Используйте поиск для фильтрации ингредиентов
+- Отмечайте купленные продукты
+
+### Управление меню
+
+- Создавайте несколько вариантов меню
+- Переименовывайте меню
+- Удаляйте ненужные меню
+- Переключайтесь между разными меню
+
+## Структура данных
+
+### Ингредиент
+```typescript
+interface Ingredient {
+  nameRu: string; // Название на русском
+  nameCz: string; // Название на чешском
+  amount: number; // Количество
+  unit: string;   // Единица измерения
+}
+```
+
+### Блюдо
+```typescript
+interface Dish {
+  name: string;
+  ingredients: Ingredient[];
+}
+```
+
+### День
+```typescript
+interface Day {
+  dayOfWeek: string;
+  lunch: Dish;
+  dinner: Dish;
+}
+```
+
+### Меню
+```typescript
+interface MenuData {
+  days: Day[];
+}
+```
+
+## Разработка
+
+### Файловая структура
+
+```
+src/
+  ├── components/
+  │   ├── app/         # Компоненты приложения
+  │   └── ui/          # UI компоненты
+  ├── lib/             # Утилиты и типы
+  ├── assets/          # Статические файлы
+  └── main.tsx         # Точка входа
+```
+
+### База данных
+
+Приложение использует IndexedDB через библиотеку Dexie для хранения меню. Схема базы данных:
+
+```typescript
+interface MenuEntry {
+  id?: number;
+  createdAt: string;
+  data: MenuData;
+}
+```
+
+## Лицензия
+
+MIT
+
+## Вклад в проект
+
+1. Форкните репозиторий
+2. Создайте ветку для вашей функциональности
+3. Внесите изменения
+4. Создайте Pull Request
