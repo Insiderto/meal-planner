@@ -1,23 +1,15 @@
-import { useState, useEffect } from "react";
-import { Menu } from "@/components/app/Menu.tsx";
-import Dropzone from "@/components/app/components/Dropzone.tsx";
-import { MenuData } from "@/lib/types.ts";
 import ShoppingList from "@/components/app/ShoppingList.tsx";
-import { db } from "@/lib/db";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
-
+import { useEffect, useState } from "react";
+import { MenuTab, MenuTabs } from "@/components/app/components/MenuTabs.tsx";
+import { MenuData } from "@/lib/types.ts";
+import { db } from "@/lib/db.ts";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable";
-
-interface MenuTab {
-  id?: number;
-  createdAt: string;
-  data: MenuData;
-}
+} from "@/components/ui/resizable.tsx";
+import { MainContent } from "@/components/app/components/MainContent.tsx";
+import { DropzoneArea } from "@/components/app/components/DropzoneArea.tsx";
 
 export function Home() {
   const [menuTabs, setMenuTabs] = useState<MenuTab[]>([]);
@@ -100,7 +92,6 @@ export function Home() {
       );
       setMenuData(newData);
     } else {
-      // Если нет активной вкладки, создаем новую
       await createNewMenu(newData);
     }
   };
@@ -110,66 +101,33 @@ export function Home() {
     setMenuData(tab.data);
   };
 
+  const renameTab = async (id: number, newName: string) => {
+    await db.menus.update(id, { createdAt: newName });
+    setMenuTabs((prev) =>
+      prev.map((tab) => (tab.id === id ? { ...tab, createdAt: newName } : tab)),
+    );
+  };
+
   return (
     <div className="h-screen">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={20} minSize={15}>
-          <div className="h-screen p-4 flex flex-col gap-2">
-            <Button
-              onClick={() => createNewMenu()}
-              className="w-full flex items-center gap-2"
-            >
-              <Plus size={16} />
-              Новое меню
-            </Button>
-            <div className="flex flex-col gap-1">
-              {menuTabs.map((tab) => (
-                <div key={tab.id} className="flex items-center gap-1">
-                  <Button
-                    variant={tab.id === activeTabId ? "default" : "ghost"}
-                    className="flex-1 justify-start"
-                    onClick={() => switchTab(tab)}
-                  >
-                    {tab.createdAt}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-100"
-                    onClick={() => tab.id && deleteMenu(tab.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
+          <MenuTabs
+            menuTabs={menuTabs}
+            activeTabId={activeTabId}
+            onCreateMenu={() => createNewMenu()}
+            onDeleteMenu={deleteMenu}
+            onSwitchTab={switchTab}
+            onRenameTab={renameTab}
+          />
         </ResizablePanel>
 
         <ResizableHandle withHandle />
 
         <ResizablePanel defaultSize={50} minSize={30}>
           <div className="h-screen relative">
-            <div className="h-[calc(100vh-200px)] overflow-auto">
-              <div className="p-4">
-                <Menu days={menuData.days} />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-              <div className="p-4 flex flex-col gap-2">
-                <Dropzone onDataLoad={updateActiveMenu} />
-                <div className="text-sm text-gray-600">
-                  <a
-                    href="/assets/menu-prompt.md"
-                    download
-                    className="text-blue-600 hover:text-blue-800 hover:underline"
-                  >
-                    Скачайте промт для составления меню и вставьте его в вашу
-                    любимую языковую модель
-                  </a>
-                </div>
-              </div>
-            </div>
+            <MainContent menuData={menuData} />
+            <DropzoneArea onDataLoad={updateActiveMenu} />
           </div>
         </ResizablePanel>
 
@@ -177,9 +135,7 @@ export function Home() {
 
         <ResizablePanel defaultSize={30} minSize={30}>
           <div className="h-screen overflow-auto">
-            <div className="p-4">
-              <ShoppingList menuData={menuData} />
-            </div>
+            <ShoppingList menuData={menuData} />
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
