@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master # или main, в зависимости от названия вашей основной ветки
+      - master
 
 # Установка разрешений для GITHUB_TOKEN
 permissions:
